@@ -3,5 +3,27 @@
   "extends": [
     "@gfmio/config-biome/biome.json"
   ],
+  "linter": {
+    "rules": {
+      "style": {
+        "noDefaultExport": "off",
+        "noInferrableTypes": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "assist": {
+        "actions": {
+          "source": {
+            "useSortedKeys": "off"
+          }
+        }
+      },
+      "includes": [
+        "package.json"
+      ]
+    }
+  ],
   "root": true
 }
