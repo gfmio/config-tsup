@@ -1,5 +1,10 @@
-import { createLibraryConfig } from './src/index.ts';
+import { createLibraryConfig } from '@/index.ts';
 
-export default createLibraryConfig(['src/index.ts'], {
-  outDir: 'dist',
-});
+export default createLibraryConfig(
+  [
+    'src/index.ts',
+  ],
+  {
+    outDir: 'dist',
+  },
+);

@@ -1,31 +1,33 @@
 import type { Options } from 'tsup';
+
 import { defineConfig } from 'tsup';
 
 /**
  * Base tsup configuration
  */
 export const baseConfig: Partial<Options> = {
-  splitting: false,
-  sourcemap: true,
   clean: true,
-  outDir: 'out/build',
-  target: 'es2022',
-  external: [],
-  treeshake: true,
-  minify: false,
-  esbuildOptions: (options) => {
+  esbuildOptions: (options: import('esbuild').BuildOptions) => {
     options.banner = {
       js: '"use strict";',
     };
   },
-  outExtension: ({ format }) => ({
-    js: {
-      cjs: '.cjs',
-      esm: '.mjs',
-      iife: '.js',
-    }[format] ?? '.js',
+  external: [],
+  minify: false,
+  outDir: 'out/build',
+  outExtension: ({ format }: { format: 'cjs' | 'esm' | 'iife' }) => ({
     dts: '.d.ts',
+    js:
+      {
+        cjs: '.cjs',
+        esm: '.mjs',
+        iife: '.js',
+      }[format] ?? '.js',
   }),
+  sourcemap: true,
+  splitting: false,
+  target: 'es2022',
+  treeshake: true,
 };
 
 /**
@@ -34,7 +36,9 @@ export const baseConfig: Partial<Options> = {
 export const cjsConfig: Options = defineConfig({
   ...baseConfig,
   dts: false,
-  format: ['cjs'],
+  format: [
+    'cjs',
+  ],
 }) as Options;
 
 /**
@@ -43,7 +47,9 @@ export const cjsConfig: Options = defineConfig({
 export const esmConfig: Options = defineConfig({
   ...baseConfig,
   dts: false,
-  format: ['esm'],
+  format: [
+    'esm',
+  ],
 }) as Options;
 
 /**
@@ -52,7 +58,9 @@ export const esmConfig: Options = defineConfig({
 export const iifeConfig: Options = defineConfig({
   ...baseConfig,
   dts: false,
-  format: ['iife'],
+  format: [
+    'iife',
+  ],
 }) as Options;
 
 /**
@@ -60,14 +68,22 @@ export const iifeConfig: Options = defineConfig({
  */
 export const dtsConfig: Options = defineConfig({
   ...baseConfig,
-  dts: { only: true },
-  format: ['esm'],
+  dts: {
+    only: true,
+  },
+  format: [
+    'esm',
+  ],
 }) as Options;
 
 /**
  * Default combined configuration (CJS + ESM + DTS)
  */
-export const defaultConfig: Options[] = [cjsConfig, esmConfig, dtsConfig];
+export const defaultConfig: Options[] = [
+  cjsConfig,
+  esmConfig,
+  dtsConfig,
+];
 
 /**
  * Create a custom tsup configuration
@@ -75,12 +91,18 @@ export const defaultConfig: Options[] = [cjsConfig, esmConfig, dtsConfig];
  * @param overrides Custom configuration overrides
  */
 export function createConfig(
-  entry: string | string[] = ['src/index.ts'],
-  overrides?: Partial<Options>
+  entry: string | string[] = [
+    'src/index.ts',
+  ],
+  overrides?: Partial<Options>,
 ): Options {
   return defineConfig({
     ...baseConfig,
-    entry: Array.isArray(entry) ? entry : [entry],
+    entry: Array.isArray(entry)
+      ? entry
+      : [
+          entry,
+        ],
     ...overrides,
   }) as Options;
 }
@@ -91,19 +113,45 @@ export function createConfig(
  * @param overrides Custom configuration overrides
  */
 export function createLibraryConfig(
-  entry: string | string[] = ['src/index.ts'],
-  overrides?: Partial<Options>
+  entry: string | string[] = [
+    'src/index.ts',
+  ],
+  overrides?: Partial<Options>,
 ): Options[] {
   const base = {
     ...baseConfig,
-    entry: Array.isArray(entry) ? entry : [entry],
+    entry: Array.isArray(entry)
+      ? entry
+      : [
+          entry,
+        ],
     ...overrides,
   };
 
   return [
-    defineConfig({ ...base, dts: false, format: ['cjs'] }) as Options,
-    defineConfig({ ...base, dts: false, format: ['esm'] }) as Options,
-    defineConfig({ ...base, dts: { only: true }, format: ['esm'] }) as Options,
+    defineConfig({
+      ...base,
+      dts: false,
+      format: [
+        'cjs',
+      ],
+    }) as Options,
+    defineConfig({
+      ...base,
+      dts: false,
+      format: [
+        'esm',
+      ],
+    }) as Options,
+    defineConfig({
+      ...base,
+      dts: {
+        only: true,
+      },
+      format: [
+        'esm',
+      ],
+    }) as Options,
   ];
 }
 
@@ -112,20 +160,22 @@ export function createLibraryConfig(
  * @param entry Entry point for the CLI
  * @param overrides Custom configuration overrides
  */
-export function createCliConfig(
-  entry: string = 'src/cli.ts',
-  overrides?: Partial<Options>
-): Options {
+export function createCliConfig(entry: string = 'src/cli.ts', overrides?: Partial<Options>): Options {
   return defineConfig({
     ...baseConfig,
-    entry: [entry],
-    format: ['esm'],
     dts: false,
-    target: 'node18',
+    entry: [
+      entry,
+    ],
+    format: [
+      'esm',
+    ],
     platform: 'node',
     shims: true,
+    target: 'node18',
     ...overrides,
   }) as Options;
 }
 
+// Export the default config as a named export instead of default export
 export default defaultConfig;
