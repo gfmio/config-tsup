@@ -149,6 +149,7 @@ export const dtsOnly = partial({
 export const browser = partial({
   platform: 'browser' as const,
   target: ES2022, // Wide browser support
+  shims: false,
 });
 
 // Node
