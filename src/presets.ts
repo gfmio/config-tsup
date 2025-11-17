@@ -131,6 +131,7 @@ export const dtsOnlyNeutralLibrary = config(merge(base, libraryPartial, neutral,
 
 export const neutralLibrary = configs(cjsNeutralLibrary, esmNeutralLibrary, dtsOnlyNeutralLibrary);
 
+// Default library export points to neutral library
 export const library = neutralLibrary;
 
 // Environment-aware Neutral library presets

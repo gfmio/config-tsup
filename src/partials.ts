@@ -239,10 +239,6 @@ export const neutral = partial({
   platform: 'neutral' as const,
 });
 
-// Isomorphic (alias of neutral)
-
-export const isomorphic = neutral;
-
 //
 // Development & Production - Base
 //
