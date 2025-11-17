@@ -422,6 +422,103 @@ export const ciAnalyzeConfig = partial(ciAnalyzer);
 // Development bundle analysis with all features
 export const devAnalyzeConfig = partial(devAnalyzer);
 
-  onSuccess: onSuccess,
+//
+// Additional Specialized Partials
+//
+
+// React library specific
+export const reactLibrary = partial({
+  external: ['react', 'react-dom', 'react/jsx-runtime'],
+  esbuildOptions: (options) => {
+    options.jsx = 'automatic';  // Use React 17+ JSX transform
+    return options;
+  },
 });
+
+// Vue library specific
+export const vueLibrary = partial({
+  external: ['vue', '@vue/*'],
+});
+
+// Preact library specific
+export const preactLibrary = partial({
+  external: ['preact', 'preact/hooks', 'preact/compat'],
+  esbuildOptions: (options) => {
+    options.jsx = 'automatic';
+    options.jsxImportSource = 'preact';
+    return options;
+  },
+});
+
+// Worker bundle (Web Worker or Service Worker)
+export const workerBundle = partial({
+  platform: 'browser' as const,
+  format: ['iife'],
+  splitting: false,  // Workers don't support splitting
+  globalName: 'self',  // Global name for IIFE bundles
+});
+
+// Lambda/Serverless function
+export const serverlessFunction = partial({
+  platform: 'node' as const,
+  format: ['cjs'],  // Most serverless platforms expect CJS
+  minify: true,
+  external: ['aws-sdk', '@aws-sdk/*'],  // AWS SDK is provided by Lambda
+  target: NODE_LTS,
+});
+
+// Deno bundle
+export const denoBundle = partial({
+  platform: 'neutral' as const,
+  format: ['esm'],
+  target: 'esnext',
+  dts: false,  // Deno uses TypeScript directly
+});
+
+// Test bundle (for test runners)
+export const testBundle = partial({
+  minify: false,
+  sourcemap: 'inline',
+  treeshake: false,  // Keep all code for testing
+  define: {
+    'process.env.NODE_ENV': '"test"',
+  }
+});
+
+// Legacy browser support
+export const legacyBrowser = partial({
+  platform: 'browser' as const,
+  target: 'es5',
+  format: ['iife'],
+  // Note: For Node.js polyfills, use esbuildOptions or a separate plugin
+});
+
+// Modern browser (ES modules)
+export const modernBrowser = partial({
+  platform: 'browser' as const,
+  target: 'es2022',
+  format: ['esm'],
+  splitting: true,
+});
+
+// Bundle all dependencies (for standalone distributions)
+export const bundleAll = partial({
+  external: [],  // Bundle everything
+  skipNodeModulesBundle: false,
+  // To bundle all dependencies, we simply set external to empty array
+});
+
+// Pure ESM package
+export const pureESM = partial({
+  format: ['esm'],
+  target: 'es2022',
+  platform: 'neutral' as const,
+  cjsInterop: false,
+  shims: false,
+});
+
+// Experimental/Edge features
+export const experimental = partial({
+  target: 'esnext',
+  // Note: Enable experimental features via tsup CLI flags or environment variables
 });
