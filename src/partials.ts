@@ -195,7 +195,8 @@ export const production = partial({
 // Library
 
 export const library = partial({
-  external: ALL_EXTERNALS  // Libraries should externalize all dependencies
+  external: ALL_EXTERNALS,  // Libraries should externalize all dependencies
+  skipNodeModulesBundle: true,
 });
 
 // CLI
