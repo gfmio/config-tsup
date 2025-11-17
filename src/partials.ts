@@ -169,7 +169,9 @@ export const neutral = partial({
 
 export const isomorphic = neutral;
 
-// Development & Production
+//
+// Development & Production - Base
+//
 
 export const development = partial({
   minify: false,
@@ -185,6 +187,103 @@ export const production = partial({
   sourcemap: false,
   define: {
     'process.env.NODE_ENV': '"production"'
+  }
+});
+
+//
+// Development & Production - Libraries
+//
+
+// Library Development: Focus on debugging and fast rebuilds
+export const libraryDevelopment = partial({
+  minify: false,                    // No minification for readability
+  sourcemap: 'inline',               // Inline sourcemaps for easy debugging
+  treeshake: false,                  // Skip treeshaking for faster builds
+  define: {
+    'process.env.NODE_ENV': '"development"',
+    __DEV__: 'true',
+    __PROD__: 'false',
+  }
+});
+
+// Library Production: Optimized but preserves readability for consumers
+export const libraryProduction = partial({
+  minify: false,                     // Let consumer's bundler handle minification
+  keepNames: true,                   // Preserve function names for better errors
+  sourcemap: true,                   // External sourcemaps for debugging
+  treeshake: true,                   // Remove dead code
+  define: {
+    'process.env.NODE_ENV': '"production"',
+    __DEV__: 'false',
+    __PROD__: 'true',
+  }
+});
+
+//
+// Development & Production - CLIs
+//
+
+// CLI Development: Fast iteration with detailed debugging
+export const cliDevelopment = partial({
+  minify: false,                     // No minification for readability
+  minifyWhitespace: false,
+  keepNames: true,                   // Preserve all names for stack traces
+  sourcemap: 'inline',               // Inline sourcemaps for debugging
+  define: {
+    'process.env.NODE_ENV': '"development"',
+    __DEV__: 'true',
+    __PROD__: 'false',
+  }
+});
+
+// CLI Production: Optimized for size and performance
+export const cliProduction = partial({
+  minify: true,                      // Full minification for smaller binaries
+  minifyWhitespace: true,
+  minifyIdentifiers: true,
+  minifySyntax: true,
+  keepNames: true,                   // Keep function names for error reports
+  sourcemap: 'hidden' as any,        // Hidden sourcemaps (available but not referenced)
+  treeshake: true,
+  define: {
+    'process.env.NODE_ENV': '"production"',
+    __DEV__: 'false',
+    __PROD__: 'true',
+  }
+});
+
+//
+// Development & Production - Browser Bundles
+//
+
+// Browser Development: Fast refresh and debugging
+export const browserDevelopment = partial({
+  minify: false,                     // No minification for readability
+  sourcemap: 'inline',               // Inline sourcemaps for browser DevTools
+  splitting: true,                   // Enable splitting for better HMR
+  treeshake: false,                  // Skip for faster builds
+  define: {
+    'process.env.NODE_ENV': '"development"',
+    __DEV__: 'true',
+    __PROD__: 'false',
+  }
+});
+
+// Browser Production: Optimized for size and performance
+export const browserProduction = partial({
+  minify: true,                      // Full minification for bandwidth
+  minifyWhitespace: true,
+  minifyIdentifiers: true,
+  minifySyntax: true,
+  keepNames: false,                  // Maximum compression
+  sourcemap: 'external' as any,      // External sourcemaps for error tracking
+  splitting: true,                   // Code splitting for lazy loading
+  treeshake: true,                   // Aggressive tree shaking
+  pure: ['console.log', 'console.debug'],  // Remove debug statements
+  define: {
+    'process.env.NODE_ENV': '"production"',
+    __DEV__: 'false',
+    __PROD__: 'true',
   }
 });
 
