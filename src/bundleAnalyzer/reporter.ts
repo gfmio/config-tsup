@@ -2,8 +2,9 @@
  * Console reporter for bundle analysis
  */
 
-import type { BundleInfo, FormatStats, AnalyzerOptions } from './types';
-import { formatBytes, getSizeEmoji, separator, getTotalSize } from './utils';
+import type { AnalyzerOptions, BundleInfo, FormatStats } from './types.ts';
+
+import { formatBytes, getSizeEmoji, getTotalSize, separator } from './utils.ts';
 
 export class ConsoleReporter {
   private options: AnalyzerOptions;
@@ -43,7 +44,7 @@ export class ConsoleReporter {
    * Print detailed file list
    */
   private printFileList(files: BundleInfo[]): void {
-    files.forEach(file => {
+    files.forEach((file) => {
       const emoji = getSizeEmoji(file.size, this.options.warnThreshold);
       const path = file.path.padEnd(35);
       const size = file.sizeFormatted.padStart(10);
@@ -56,11 +57,11 @@ export class ConsoleReporter {
    */
   printWarnings(allFiles: BundleInfo[]): void {
     const threshold = this.options.warnThreshold || 512 * 1024;
-    const largeFiles = allFiles.filter(f => f.size > threshold * 2); // 2x threshold
+    const largeFiles = allFiles.filter((f) => f.size > threshold * 2); // 2x threshold
 
     if (largeFiles.length > 0) {
       console.log(`\n⚠️  Warning: The following files exceed ${formatBytes(threshold * 2)}:`);
-      largeFiles.forEach(file => {
+      largeFiles.forEach((file) => {
         console.log(`   - ${file.path} (${file.sizeFormatted})`);
       });
       console.log('   Consider code splitting or externalizing large dependencies.');
@@ -71,15 +72,15 @@ export class ConsoleReporter {
    * Print summary statistics
    */
   printSummary(formats: FormatStats[]): void {
-    const allFiles = formats.flatMap(f => f.files);
+    const allFiles = formats.flatMap((f) => f.files);
     const totalSize = getTotalSize(allFiles);
     const fileCount = allFiles.length;
 
     console.log('\n' + separator());
-    console.log(`📈 Summary:`);
+    console.log('📈 Summary:');
     console.log(`   Total output size: ${formatBytes(totalSize)}`);
     console.log(`   Total files: ${fileCount}`);
-    console.log(`   Formats: ${formats.map(f => f.format).join(', ')}`);
+    console.log(`   Formats: ${formats.map((f) => f.format).join(', ')}`);
   }
 
   /**
@@ -88,7 +89,7 @@ export class ConsoleReporter {
   printVisualizationStatus(files: string[]): void {
     if (files.length > 0) {
       console.log('\n🎨 Generated interactive bundle visualizations:');
-      files.forEach(file => {
+      files.forEach((file) => {
         console.log(`   ✅ ${file}`);
       });
       console.log('\n💡 Tip: Open the HTML files in your browser to explore the interactive bundle visualization');

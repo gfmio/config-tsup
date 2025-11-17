@@ -6,11 +6,12 @@
  * Check if running in development mode
  * Checks NODE_ENV and common development indicators
  */
+import process from 'node:process';
 export function isDevelopment(): boolean {
   return (
-    process.env['NODE_ENV'] === 'development' ||
-    process.env['NODE_ENV'] === 'dev' ||
-    (!process.env['NODE_ENV'] && process.env['npm_lifecycle_event'] === 'dev')
+    process.env['NODE_ENV'] === 'development'
+    || process.env['NODE_ENV'] === 'dev'
+    || (!process.env['NODE_ENV'] && process.env['npm_lifecycle_event'] === 'dev')
   );
 }
 
@@ -35,10 +36,10 @@ export function isProduction(): boolean {
 export function getBuildMode(): 'development' | 'production' {
   // Check various common override patterns
   const envVars = [
-    process.env['TSUP_ENV'],      // tsup-specific (most specific)
-    process.env['BUILD_ENV'],     // generic build environment
-    process.env['MODE'],          // Vite convention
-    process.env['NODE_ENV'],      // Node.js standard
+    process.env['TSUP_ENV'], // tsup-specific (most specific)
+    process.env['BUILD_ENV'], // generic build environment
+    process.env['MODE'], // Vite convention
+    process.env['NODE_ENV'], // Node.js standard
   ];
 
   for (const value of envVars) {
@@ -51,8 +52,7 @@ export function getBuildMode(): 'development' | 'production' {
   }
 
   // Check npm lifecycle event
-  if (process.env['npm_lifecycle_event'] === 'dev' ||
-      process.env['npm_lifecycle_event'] === 'develop') {
+  if (process.env['npm_lifecycle_event'] === 'dev' || process.env['npm_lifecycle_event'] === 'develop') {
     return 'development';
   }
 
@@ -65,13 +65,13 @@ export function getBuildMode(): 'development' | 'production' {
  */
 export function isCI(): boolean {
   return !!(
-    process.env['CI'] ||
-    process.env['CONTINUOUS_INTEGRATION'] ||
-    process.env['GITHUB_ACTIONS'] ||
-    process.env['GITLAB_CI'] ||
-    process.env['CIRCLECI'] ||
-    process.env['TRAVIS'] ||
-    process.env['JENKINS_URL']
+    process.env['CI']
+    || process.env['CONTINUOUS_INTEGRATION']
+    || process.env['GITHUB_ACTIONS']
+    || process.env['GITLAB_CI']
+    || process.env['CIRCLECI']
+    || process.env['TRAVIS']
+    || process.env['JENKINS_URL']
   );
 }
 
@@ -79,9 +79,5 @@ export function isCI(): boolean {
  * Check if running in watch mode
  */
 export function isWatchMode(): boolean {
-  return !!(
-    process.env['WATCH'] ||
-    process.argv.includes('--watch') ||
-    process.argv.includes('-w')
-  );
+  return !!(process.env['WATCH'] || process.argv.includes('--watch') || process.argv.includes('-w'));
 }

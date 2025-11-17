@@ -2,10 +2,12 @@
  * Visualization generator using esbuild-visualizer
  */
 
+import type { AnalyzerOptions } from './types.ts';
+
+import process from 'node:process';
 import { exec } from 'child_process';
-import { promisify } from 'util';
 import { join } from 'path';
-import type { AnalyzerOptions } from './types';
+import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
@@ -15,8 +17,8 @@ export class Visualizer {
 
   constructor(options: AnalyzerOptions = {}) {
     this.options = {
-      visualizer: 'auto',
       template: 'treemap',
+      visualizer: 'auto',
       ...options,
     };
     this.outputDir = options.outputDir || join(process.cwd(), 'dist');
@@ -45,7 +47,9 @@ export class Visualizer {
       const command = this.buildCommand(metafilePath, outputPath);
 
       // Execute the visualization command
-      await execAsync(command, { cwd: process.cwd() });
+      await execAsync(command, {
+        cwd: process.cwd(),
+      });
 
       return outputName;
     } catch (error) {
@@ -61,20 +65,21 @@ export class Visualizer {
   /**
    * Generate visualizations for multiple metafiles
    */
-  async generateAll(metafiles: Array<{ path: string; format: string }>): Promise<string[]> {
+  async generateAll(
+    metafiles: Array<{
+      path: string;
+      format: string;
+    }>,
+  ): Promise<string[]> {
     if (!this.shouldGenerate()) {
       return [];
     }
 
-    const results = await Promise.allSettled(
-      metafiles.map(({ path, format }) => this.generate(path, format))
-    );
+    const results = await Promise.allSettled(metafiles.map(({ path, format }) => this.generate(path, format)));
 
     return results
-      .filter((r): r is PromiseFulfilledResult<string | null> =>
-        r.status === 'fulfilled' && r.value !== null
-      )
-      .map(r => r.value as string);
+      .filter((r): r is PromiseFulfilledResult<string | null> => r.status === 'fulfilled' && r.value !== null)
+      .map((r) => r.value as string);
   }
 
   /**
@@ -86,9 +91,12 @@ export class Visualizer {
     // Using proper escaping for paths that might contain spaces
     return [
       'esbuild-visualizer',
-      '--metadata', `"${metafilePath}"`,
-      '--filename', `"${outputPath}"`,
-      '--template', template,
+      '--metadata',
+      `"${metafilePath}"`,
+      '--filename',
+      `"${outputPath}"`,
+      '--template',
+      template,
     ].join(' ');
   }
 
@@ -97,7 +105,9 @@ export class Visualizer {
    */
   async isAvailable(): Promise<boolean> {
     try {
-      await execAsync('esbuild-visualizer --version', { cwd: process.cwd() });
+      await execAsync('esbuild-visualizer --version', {
+        cwd: process.cwd(),
+      });
       return true;
     } catch {
       return false;

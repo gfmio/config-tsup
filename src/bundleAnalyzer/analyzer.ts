@@ -2,23 +2,15 @@
  * Core bundle analyzer implementation
  */
 
+import type { AnalyzerOptions, BundleInfo, FormatStats, Metafile, MetafileOutput } from './types.ts';
+
+import process from 'node:process';
 import { readdir, readFile } from 'fs/promises';
 import { join } from 'path';
-import type {
-  AnalyzerOptions,
-  BundleInfo,
-  FormatStats,
-  Metafile,
-  MetafileOutput,
-} from './types';
-import {
-  formatBytes,
-  getRelativePath,
-  extractFormat,
-  sortBySize,
-} from './utils';
-import { ConsoleReporter } from './reporter';
-import { Visualizer } from './visualizer';
+
+import { ConsoleReporter } from './reporter.ts';
+import { extractFormat, formatBytes, getRelativePath, sortBySize } from './utils.ts';
+import { Visualizer } from './visualizer.ts';
 
 export class BundleAnalyzer {
   private options: AnalyzerOptions;
@@ -26,13 +18,18 @@ export class BundleAnalyzer {
   private visualizer: Visualizer;
   private distDir: string;
 
-  constructor(options: AnalyzerOptions = {}, context?: { outDir?: string }) {
+  constructor(
+    options: AnalyzerOptions = {},
+    context?: {
+      outDir?: string;
+    },
+  ) {
     this.options = {
-      visualizer: 'auto',
-      template: 'treemap',
       detailed: true,
-      warnThreshold: 512 * 1024, // 512 KB
       failOnLarge: false,
+      template: 'treemap',
+      visualizer: 'auto',
+      warnThreshold: 512 * 1024, // 512 KB
       ...options,
     };
 
@@ -65,7 +62,6 @@ export class BundleAnalyzer {
 
       // Check for violations if failOnLarge is enabled
       this.checkViolations(formatStats);
-
     } catch (error) {
       this.handleError(error as Error);
     }
@@ -74,14 +70,19 @@ export class BundleAnalyzer {
   /**
    * Find all metafiles in the dist directory
    */
-  private async findMetafiles(): Promise<Array<{ path: string; format: string }>> {
+  private async findMetafiles(): Promise<
+    Array<{
+      path: string;
+      format: string;
+    }>
+  > {
     const files = await readdir(this.distDir);
 
     return files
-      .filter(f => f.startsWith('metafile-') && f.endsWith('.json'))
-      .map(filename => ({
-        path: join(this.distDir, filename),
+      .filter((f) => f.startsWith('metafile-') && f.endsWith('.json'))
+      .map((filename) => ({
         format: extractFormat(filename),
+        path: join(this.distDir, filename),
       }));
   }
 
@@ -89,7 +90,10 @@ export class BundleAnalyzer {
    * Process metafiles and extract statistics
    */
   private async processMetafiles(
-    metafiles: Array<{ path: string; format: string }>
+    metafiles: Array<{
+      path: string;
+      format: string;
+    }>,
   ): Promise<FormatStats[]> {
     const stats: FormatStats[] = [];
 
@@ -100,10 +104,10 @@ export class BundleAnalyzer {
       const files = this.extractBundleInfo(metafile);
 
       stats.push({
-        format,
-        totalSize: files.reduce((sum, f) => sum + f.size, 0),
         fileCount: files.length,
         files: sortBySize(files),
+        format,
+        totalSize: files.reduce((sum, f) => sum + f.size, 0),
       });
     }
 
@@ -116,11 +120,16 @@ export class BundleAnalyzer {
   private extractBundleInfo(metafile: Metafile): BundleInfo[] {
     const outputs = Object.entries(metafile.outputs || {});
 
-    return outputs.map(([path, info]: [string, MetafileOutput]) => ({
-      path: getRelativePath(path),
-      size: info.bytes,
-      sizeFormatted: formatBytes(info.bytes),
-    }));
+    return outputs.map(
+      ([path, info]: [
+        string,
+        MetafileOutput,
+      ]) => ({
+        path: getRelativePath(path),
+        size: info.bytes,
+        sizeFormatted: formatBytes(info.bytes),
+      }),
+    );
   }
 
   /**
@@ -130,7 +139,7 @@ export class BundleAnalyzer {
     this.reporter.printHeader();
 
     // Print stats for each format
-    formatStats.forEach(stats => {
+    formatStats.forEach((stats) => {
       this.reporter.printFormatStats(stats);
     });
 
@@ -138,7 +147,7 @@ export class BundleAnalyzer {
     this.reporter.printSummary(formatStats);
 
     // Print warnings
-    const allFiles = formatStats.flatMap(s => s.files);
+    const allFiles = formatStats.flatMap((s) => s.files);
     this.reporter.printWarnings(allFiles);
   }
 
@@ -146,7 +155,10 @@ export class BundleAnalyzer {
    * Generate visualizations
    */
   private async generateVisualizations(
-    metafiles: Array<{ path: string; format: string }>
+    metafiles: Array<{
+      path: string;
+      format: string;
+    }>,
   ): Promise<void> {
     if (!this.visualizer.shouldGenerate()) {
       return;
@@ -158,7 +170,7 @@ export class BundleAnalyzer {
       this.reporter.printVisualizationStatus(generatedFiles);
     } else if (this.options.visualizer === 'auto') {
       this.reporter.printInfo(
-        'Install esbuild-visualizer for interactive bundle visualizations:\n   npm i -D esbuild-visualizer'
+        'Install esbuild-visualizer for interactive bundle visualizations:\n   npm i -D esbuild-visualizer',
       );
     }
 
@@ -174,9 +186,7 @@ export class BundleAnalyzer {
     }
 
     const threshold = this.options.warnThreshold || 512 * 1024;
-    const violations = formatStats
-      .flatMap(s => s.files)
-      .filter(f => f.size > threshold * 2);
+    const violations = formatStats.flatMap((s) => s.files).filter((f) => f.size > threshold * 2);
 
     if (violations.length > 0) {
       const message = `Build failed: ${violations.length} file(s) exceed size limit of ${formatBytes(threshold * 2)}`;

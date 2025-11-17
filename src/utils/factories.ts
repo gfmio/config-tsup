@@ -3,18 +3,16 @@
  */
 
 import type { Options } from 'tsup';
-import { getBuildMode, isCI, isWatchMode } from './env';
-import { merge } from './merge';
-import { config } from './config';
+
+import { config } from './config.ts';
+import { getBuildMode, isCI, isWatchMode } from './env.ts';
+import { merge } from './merge.ts';
 
 /**
  * Create environment-aware configuration
  * Automatically selects development or production settings
  */
-export function createEnvConfig(
-  developmentConfig: Partial<Options>,
-  productionConfig: Partial<Options>
-): Options {
+export function createEnvConfig(developmentConfig: Partial<Options>, productionConfig: Partial<Options>): Options {
   const mode = getBuildMode();
   return config(mode === 'development' ? developmentConfig : productionConfig) as Options;
 }
@@ -29,9 +27,11 @@ export function createAdaptiveConfig(
     production?: Partial<Options>;
     ci?: Partial<Options>;
     watch?: Partial<Options>;
-  }
+  },
 ): Options {
-  let result = { ...baseConfig };
+  let result = {
+    ...baseConfig,
+  };
 
   // Apply environment overrides
   const mode = getBuildMode();

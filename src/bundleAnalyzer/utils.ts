@@ -2,7 +2,9 @@
  * Utility functions for bundle analysis
  */
 
-import type { BundleInfo } from './types';
+import type { BundleInfo } from './types.ts';
+
+import process from 'node:process';
 
 /**
  * Format bytes to human-readable string
@@ -10,9 +12,14 @@ import type { BundleInfo } from './types';
 export function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B';
 
-  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const sizes = [
+    'B',
+    'KB',
+    'MB',
+    'GB',
+  ];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  const value = bytes / Math.pow(1024, i);
+  const value = bytes / 1024 ** i;
 
   return `${value.toFixed(2)} ${sizes[i]}`;
 }
@@ -21,9 +28,9 @@ export function formatBytes(bytes: number): string {
  * Get size emoji based on file size
  */
 export function getSizeEmoji(bytes: number, warnThreshold: number = 512 * 1024): string {
-  if (bytes > 1024 * 1024) return '⚠️';  // > 1MB
+  if (bytes > 1024 * 1024) return '⚠️'; // > 1MB
   if (bytes > warnThreshold) return '⚡'; // > warning threshold
-  return '✅';                            // OK
+  return '✅'; // OK
 }
 
 /**
@@ -37,7 +44,9 @@ export function separator(char: string = '═', length: number = 60): string {
  * Sort bundles by size (largest first)
  */
 export function sortBySize(bundles: BundleInfo[]): BundleInfo[] {
-  return [...bundles].sort((a, b) => b.size - a.size);
+  return [
+    ...bundles,
+  ].sort((a, b) => b.size - a.size);
 }
 
 /**
@@ -52,17 +61,12 @@ export function getTotalSize(bundles: BundleInfo[]): number {
  */
 export function getRelativePath(fullPath: string): string {
   const cwd = process.cwd();
-  return fullPath.startsWith(cwd)
-    ? fullPath.replace(cwd + '/', '')
-    : fullPath;
+  return fullPath.startsWith(cwd) ? fullPath.replace(cwd + '/', '') : fullPath;
 }
 
 /**
  * Extract format from metafile name
  */
 export function extractFormat(filename: string): string {
-  return filename
-    .replace('metafile-', '')
-    .replace('.json', '')
-    .toUpperCase() || 'UNKNOWN';
+  return filename.replace('metafile-', '').replace('.json', '').toUpperCase() || 'UNKNOWN';
 }

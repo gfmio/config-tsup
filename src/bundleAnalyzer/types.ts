@@ -12,7 +12,10 @@ export interface BundleInfo {
 export interface MetafileOutput {
   bytes: number;
   inputs?: Record<string, unknown>;
-  imports?: Array<{ path: string; kind: string }>;
+  imports?: Array<{
+    path: string;
+    kind: string;
+  }>;
   exports?: string[];
 }
 
