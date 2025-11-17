@@ -11,6 +11,9 @@ export default neutralLibrary.map((config) =>
       partials: 'src/partials.ts',
       presets: 'src/presets.ts',
       utils: 'src/utils/index.ts',
+      builder: 'src/builder.ts',
+      validation: 'src/validation.ts',
+      cli: 'src/cli.ts',
     }),
   ),
 );
