@@ -4,7 +4,7 @@
 
 import type { AnalyzerOptions, BundleInfo, FormatStats } from './types.ts';
 
-import { formatBytes, getSizeEmoji, getTotalSize } from './utils.ts';
+import { formatBytes, getSizeEmoji, getTotalSize, separator } from './utils.ts';
 
 export class ConsoleReporter {
   private readonly options: AnalyzerOptions;
@@ -20,13 +20,20 @@ export class ConsoleReporter {
   /**
    * Print the main report header
    */
-  printHeader(): void {}
+  printHeader(): void {
+    console.log('\n📊 Bundle Analysis Report');
+    console.log(separator('═', 60));
+  }
 
   /**
    * Print stats for a specific format
    */
   printFormatStats(stats: FormatStats): void {
-    const _totalSizeStr = formatBytes(stats.totalSize);
+    const totalSizeStr = formatBytes(stats.totalSize);
+
+    console.log(`\n📦 ${stats.format} Format:`);
+    console.log(`   Total size: ${totalSizeStr}`);
+    console.log(`   Files: ${stats.fileCount}`);
 
     if (this.options.detailed && stats.files.length > 0) {
       this.printFileList(stats.files);
@@ -38,9 +45,10 @@ export class ConsoleReporter {
    */
   private printFileList(files: BundleInfo[]): void {
     files.forEach((file) => {
-      const _emoji = getSizeEmoji(file.size, this.options.warnThreshold);
-      const _path = file.path.padEnd(35);
-      const _size = file.sizeFormatted.padStart(10);
+      const emoji = getSizeEmoji(file.size, this.options.warnThreshold);
+      const path = file.path.padEnd(35);
+      const size = file.sizeFormatted.padStart(10);
+      console.log(`   ${emoji} ${path} ${size}`);
     });
   }
 
@@ -52,7 +60,10 @@ export class ConsoleReporter {
     const largeFiles = allFiles.filter((f) => f.size > threshold * 2); // 2x threshold
 
     if (largeFiles.length > 0) {
-      largeFiles.forEach((_file) => {});
+      console.log(`\n⚠️  Warning: ${largeFiles.length} file(s) exceed size threshold`);
+      largeFiles.forEach((file) => {
+        console.log(`   ⚠️  ${file.path} (${file.sizeFormatted})`);
+      });
     }
   }
 
@@ -61,8 +72,15 @@ export class ConsoleReporter {
    */
   printSummary(formats: FormatStats[]): void {
     const allFiles = formats.flatMap((f) => f.files);
-    const _totalSize = getTotalSize(allFiles);
-    const _fileCount = allFiles.length;
+    const totalSize = getTotalSize(allFiles);
+    const fileCount = allFiles.length;
+    const formatList = formats.map(f => f.format).join(', ');
+
+    console.log(`\n${separator('═', 60)}`);
+    console.log('📈 Summary:');
+    console.log(`   Total output size: ${formatBytes(totalSize)}`);
+    console.log(`   Total files: ${fileCount}`);
+    console.log(`   Formats: ${formatList}`);
   }
 
   /**
@@ -70,25 +88,37 @@ export class ConsoleReporter {
    */
   printVisualizationStatus(files: string[]): void {
     if (files.length > 0) {
-      files.forEach((_file) => {});
+      console.log('\n🎨 Visualizations generated:');
+      files.forEach((file) => {
+        console.log(`   ✅ ${file}`);
+      });
     }
   }
 
   /**
    * Print completion message
    */
-  printFooter(): void {}
+  printFooter(): void {
+    console.log('\n✨ Bundle analysis complete!');
+  }
 
   /**
    * Print error message
    */
-  printError(_message: string, error?: Error): void {
+  printError(message: string, error?: Error): void {
+    console.error(`\n❌ Error: ${message}`);
     if (error && this.options.detailed) {
+      console.error('   Details:', error.message);
+      if (error.stack) {
+        console.error('   Stack:', error.stack);
+      }
     }
   }
 
   /**
    * Print info message
    */
-  printInfo(_message: string): void {}
+  printInfo(message: string): void {
+    console.log(`ℹ️  ${message}`);
+  }
 }
