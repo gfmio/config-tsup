@@ -199,7 +199,7 @@ export const library = partial({
   skipNodeModulesBundle: true,
 });
 
-// CLI
+// CLI - Regular (npm-distributed, dependencies NOT bundled)
 
 export const cli = partial({
   ...banner(NODE_SHEBANG),
@@ -210,8 +210,21 @@ export const cli = partial({
   skipNodeModulesBundle: true,  // Don't bundle dependencies for npm distribution
 });
 
+// Standalone CLI (single-file executable, dependencies ARE bundled)
 
-export const nodeCli = merge(node, cli);
+export const standaloneCli = partial({
+  ...banner(NODE_SHEBANG),
+  minify: true,
+  keepNames: true,  // Preserve function names for stack traces
+  shims: true,
+  target: NODE_LTS,
+  skipNodeModulesBundle: false,  // Bundle all dependencies for standalone executable
+  external: [],  // Bundle everything except Node.js built-ins
+});
+
+// Node CLI (regular npm distribution)
+
+export const nodeCli = merge(node, cli, banner(NODE_SHEBANG));
 
 // ESM Node CLI
 
