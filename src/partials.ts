@@ -7,29 +7,70 @@ import { banner } from "./utils/banner";
 import { merge } from "./utils/merge";
 import { partial } from "./utils/partial";
 
+// Clean options
+
 export const clean = partial({ clean: true });
 export const noClean = partial({ clean: false });
+
+// Minify options
 
 export const minify = partial({ minify: true });
 export const noMinify = partial({ minify: false });
 
+// Granular minification options (esbuild)
+
+export const minifyWhitespace = partial({ minifyWhitespace: true });
+export const noMinifyWhitespace = partial({ minifyWhitespace: false });
+export const minifyIdentifiers = partial({ minifyIdentifiers: true });
+export const noMinifyIdentifiers = partial({ minifyIdentifiers: false });
+export const minifySyntax = partial({ minifySyntax: true });
+export const noMinifySyntax = partial({ minifySyntax: false });
+export const keepNames = partial({ keepNames: true });
+export const noKeepNames = partial({ keepNames: false });
+
+// Minification presets
+
+export const debugMinify = merge(minify, minifyWhitespace, minifySyntax, keepNames, noMinifyIdentifiers);
+export const productionMinify = merge(minify, minifyWhitespace, minifyIdentifiers, minifySyntax);
+export const safeMinify = merge(minify, minifyWhitespace, keepNames, noMinifyIdentifiers, noMinifySyntax);
+
+// Sourcemap options
+
 export const sourcemap = partial({ sourcemap: true });
+export const sourcemapInline = partial({ sourcemap: 'inline' });
+export const sourcemapExternal = partial({ sourcemap: 'external' as any });  // tsup types don't include this but it works
+export const sourcemapHidden = partial({ sourcemap: 'hidden' as any });  // tsup types don't include this but it works
 export const noSourcemap = partial({ sourcemap: false });
+
+// Splitting options
 
 export const splitting = partial({ splitting: true });
 export const noSplitting = partial({ splitting: false });
 
+// Treeshake options
+
 export const treeshake = partial({ treeshake: true });
 export const noTreeshake = partial({ treeshake: false });
+
+// dts options
 
 export const dts = partial({ dts: true });
 export const noDts = partial({ dts: false });
 
+// shims options
+
 export const shims = partial({ shims: true });
 export const noShims = partial({ shims: false });
 
+// cjsInterop options
+
 export const cjsInterop = partial({ cjsInterop: true });
 export const noCjsInterop = partial({ cjsInterop: false });
+
+// skipNodeModulesBundle options
+
+export const skipNodeModulesBundle = partial({ skipNodeModulesBundle: true });
+export const noSkipNodeModulesBundle = partial({ skipNodeModulesBundle: false });
 
 //
 // Base
@@ -45,7 +86,7 @@ export const base = partial({
   minify: false,
   outDir: DIST,
   outExtension: defaultOutExtensionHelper,
-  // sourcemap: omitted - let presets/context decide
+  sourcemap: true,
   splitting: false,
   target: ES2022,
   treeshake: true,
@@ -59,6 +100,7 @@ export const base = partial({
 
 export const cjs = partial({
   ...banner(USE_STRICT),
+  cjsInterop: true,
   format: [
     'cjs',
   ],
@@ -95,6 +137,7 @@ export const dtsOnly = partial({
   format: [
     'esm',
   ],
+  sourcemap: false,
 });
 
 //
@@ -137,6 +180,7 @@ export const development = partial({
 
 export const production = partial({
   minify: true,
+  keepNames: false,  // Maximum compression for production
   sourcemap: false,
   define: {
     'process.env.NODE_ENV': '"production"'
@@ -150,40 +194,42 @@ export const production = partial({
 // Library
 
 export const library = partial({
-  external: []
+  external: ALL_EXTERNALS  // Libraries should externalize all dependencies
 });
 
 // CLI
 
 export const cli = partial({
   ...banner(NODE_SHEBANG),
+  minify: true,
+  keepNames: true,  // Preserve function names for stack traces
   shims: true,
   target: NODE_LTS,
 });
 
 // Node CLI
 
-export const nodeCli = merge(cli);
+export const nodeCli = merge(node, cli);
 
 // ESM Node CLI
 
-export const esmNodeCli = merge(cli);
+export const esmNodeCli = merge(node, cli, esm);
 
 // CJS Node CLI
 
-export const cjsNodeCli = merge(cli, banner(NODE_SHEBANG+USE_STRICT));
+export const cjsNodeCli = merge(node, cli, cjs, banner(NODE_SHEBANG+USE_STRICT));
 
 // Bun CLI
 
-export const bunCli = merge(cli, banner(BUN_SHEBANG));
+export const bunCli = merge(neutral, cli, banner(BUN_SHEBANG));
 
 // ESM Bun CLI
 
-export const esmBunCli = merge(bunCli);
+export const esmBunCli = merge(neutral, cli, esm, banner(BUN_SHEBANG));
 
 // CJS Bun CLI
 
-export const cjsBunCli = merge(bunCli, banner(BUN_SHEBANG+USE_STRICT));
+export const cjsBunCli = merge(neutral, cli, cjs, banner(BUN_SHEBANG+USE_STRICT));
 
 //
 // Bundle Analyzer
