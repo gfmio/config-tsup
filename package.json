@@ -20,7 +20,28 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.mjs",
+      "require": "./dist/constants.cjs"
+    },
+    "./partials": {
+      "types": "./dist/partials.d.ts",
+      "import": "./dist/partials.mjs",
+      "require": "./dist/partials.cjs"
+    },
+    "./presets": {
+      "types": "./dist/partials.d.ts",
+      "import": "./dist/partials.mjs",
+      "require": "./dist/partials.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
