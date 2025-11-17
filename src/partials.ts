@@ -275,9 +275,10 @@ export const cjsStandaloneBunCli = merge(neutral, standaloneCli, cjsOnly, banner
 // Bundle Analyzer
 //
 
+import { onSuccess } from "./bundleAnalyzer/indes.ts";
+
 export const analyzeConfig = partial({
   metafile: true,  // Generate bundle analysis metadata
-  onSuccess: async () => {
-    // Could add bundle size reporting here
-  },
+  onSuccess: onSuccess,
+});
 });
