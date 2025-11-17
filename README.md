@@ -442,6 +442,48 @@ export default defineConfig(
 );
 ```
 
+## Type-Safe Builders
+
+This package includes two type-safe builder implementations for creating tsup configurations with compile-time constraint validation:
+
+### 1. Simple Builder
+
+Minimal API with 5 generic operations for maximum composability:
+
+```typescript
+import { simpleBuilder } from '@gfmio/config-tsup/simple-builder';
+
+const config = simpleBuilder()
+  .set('entry', ['src/index.ts'])
+  .merge({
+    format: ['cjs', 'esm'] as const,
+    dts: true,
+    external: ['react', 'react-dom'],
+  })
+  .build();
+```
+
+### 2. Robust Builder
+
+Comprehensive constraint validation with optional runtime checks:
+
+```typescript
+import { robustBuilder } from '@gfmio/config-tsup/robust-builder';
+
+const config = robustBuilder()
+  .set('entry', ['src/index.ts'])
+  .set('format', 'esm')
+  .merge({ splitting: true })  // ✅ Type-checked and runtime-validated
+  .build();
+
+// This would fail at compile-time:
+// robustBuilder()
+//   .set('format', 'iife')
+//   .merge({ splitting: true })  // ❌ ConstraintViolation<'Cannot enable splitting with IIFE'>
+```
+
+**See [docs/builder-comparison.md](docs/builder-comparison.md) for detailed comparison and usage guide.**
+
 ## Default Settings
 
 ### Base Configuration
