@@ -24,7 +24,7 @@ export default createLibraryConfig(['src/index.ts']);
 This creates three builds:
 
 - `dist/index.cjs` - CommonJS build
-- `dist/index.mjs` - ESM build  
+- `dist/index.mjs` - ESM build
 - `dist/index.d.ts` - TypeScript declarations
 
 ### CLI Tool
@@ -217,13 +217,13 @@ export default createLibraryConfig([
 ### Development vs Production
 
 ```typescript
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env['NODE_ENV'] === 'development';
 
 export default createLibraryConfig(['src/index.ts'], {
   minify: !isDev,
   sourcemap: isDev,
   define: {
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    'process.env.NODE_ENV': JSON.stringify(process.env['NODE_ENV']),
   },
 });
 ```
@@ -307,11 +307,11 @@ export default createLibraryConfig(['src/index.ts'], {
 ```typescript
 export default createConfig(['src/index.ts'], {
   define: {
-    __DEV__: process.env.NODE_ENV === 'development',
+    __DEV__: process.env['NODE_ENV'] === 'development',
     __VERSION__: JSON.stringify(process.env.npm_package_version),
   },
   env: {
-    NODE_ENV: process.env.NODE_ENV || 'production',
+    NODE_ENV: process.env['NODE_ENV'] || 'production',
   },
 });
 ```
