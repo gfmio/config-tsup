@@ -12,6 +12,7 @@
     "@gfmio/config-biome": "^1.0.2",
     "@gfmio/tsconfig": "^1.0.0",
     "@ngx-devs/commitlint-plugin-imperative": "^1.1.4",
+    "esbuild-visualizer": "^0.7.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
   },
@@ -59,7 +60,8 @@
   "module": "./dist/index.mjs",
   "name": "@gfmio/config-tsup",
   "peerDependencies": {
-    "tsup": "^8.5.1"
+    "tsup": "^8.5.1",
+    "esbuild-visualizer": "^0.7.0"
   },
   "repository": {
     "type": "git",
@@ -68,7 +70,10 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
