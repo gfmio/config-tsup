@@ -54,6 +54,21 @@
       "import": "./dist/bundleAnalyzer/index.mjs",
       "require": "./dist/bundleAnalyzer/index.cjs"
     },
+    "./builder": {
+      "types": "./dist/builder.d.ts",
+      "import": "./dist/builder.mjs",
+      "require": "./dist/builder.cjs"
+    },
+    "./validation": {
+      "types": "./dist/validation.d.ts",
+      "import": "./dist/validation.mjs",
+      "require": "./dist/validation.cjs"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.mjs",
+      "require": "./dist/cli.cjs"
+    },
     "./package.json": "./package.json"
   },
   "files": [
