@@ -25,10 +25,10 @@ async function select(question: string, choices: string[]): Promise<string> {
   });
 
   const answer = await prompt('Enter choice (number):');
-  const index = parseInt(answer) - 1;
+  const index = parseInt(answer || '0') - 1;
 
   if (index >= 0 && index < choices.length) {
-    return choices[index];
+    return choices[index]!;
   }
 
   console.log('Invalid choice, please try again.');
@@ -49,7 +49,7 @@ interface ConfigOptions {
   sourcemap: boolean;
   bundleAnalysis: boolean;
   framework?: string;
-  entry?: string;
+  entry: string;
 }
 
 async function collectOptions(): Promise<ConfigOptions> {
@@ -114,7 +114,7 @@ async function collectOptions(): Promise<ConfigOptions> {
 
   const entry = await prompt('Entry point (default: src/index.ts):') || 'src/index.ts';
 
-  return {
+  const result: ConfigOptions = {
     projectType,
     format,
     platform,
@@ -122,9 +122,14 @@ async function collectOptions(): Promise<ConfigOptions> {
     minify,
     sourcemap,
     bundleAnalysis,
-    framework,
     entry
   };
+
+  if (framework) {
+    result.framework = framework;
+  }
+
+  return result;
 }
 
 function generateConfig(options: ConfigOptions): string {
@@ -200,7 +205,7 @@ function generatePackageJsonScripts(options: ConfigOptions): string {
   };
 
   if (options.projectType.includes('CLI')) {
-    scripts.start = `node dist/${options.entry.replace('src/', '').replace('.ts', '.mjs')}`;
+    scripts['start'] = `node dist/${options.entry.replace('src/', '').replace('.ts', '.mjs')}`;
   }
 
   return JSON.stringify(scripts, null, 2).slice(1, -1);
@@ -248,7 +253,7 @@ async function main() {
       console.log('Aborted.');
     }
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('Error:', error instanceof Error ? error.message : String(error));
     process.exit(1);
   } finally {
     process.stdin.pause();
