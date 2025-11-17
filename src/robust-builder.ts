@@ -64,7 +64,7 @@ type Merge2<T, U> = Omit<T, keyof U> & U;
  * Comprehensive constraint validation with specific error messages
  * Returns the merged config if valid, or a ConstraintViolation if invalid
  */
-type ValidateMergedConfig<Merged extends Partial<ExtendedOptions>> =
+type ValidateMergedConfig<Merged> =
   // Check 1: IIFE format incompatible with splitting
   Merged extends { splitting: true; format: infer F }
     ? FormatIncludes<F, 'iife'> extends true
@@ -72,7 +72,7 @@ type ValidateMergedConfig<Merged extends Partial<ExtendedOptions>> =
       : ValidateConstraint2<Merged>
     : ValidateConstraint2<Merged>;
 
-type ValidateConstraint2<Merged extends Partial<ExtendedOptions>> =
+type ValidateConstraint2<Merged> =
   // Check 2: Splitting requires ESM format
   Merged extends { splitting: true; format: infer F }
     ? HasESM<F> extends true
@@ -80,19 +80,19 @@ type ValidateConstraint2<Merged extends Partial<ExtendedOptions>> =
       : ConstraintViolation<'Code splitting requires ESM format - add "esm" to format array or set format to "esm"'>
     : ValidateConstraint3<Merged>;
 
-type ValidateConstraint3<Merged extends Partial<ExtendedOptions>> =
+type ValidateConstraint3<Merged> =
   // Check 3: Browser platform incompatible with shims
   Merged extends { platform: 'browser'; shims: true }
     ? ConstraintViolation<'Cannot use shims with browser platform - shims are only for Node.js'>
     : ValidateConstraint4<Merged>;
 
-type ValidateConstraint4<Merged extends Partial<ExtendedOptions>> =
+type ValidateConstraint4<Merged> =
   // Check 4: CLI preset incompatible with skipNodeModulesBundle
   Merged extends { productType: 'cli'; skipNodeModulesBundle: true }
     ? ConstraintViolation<'CLI tools should bundle dependencies - cannot skip node_modules bundling'>
     : ValidateConstraint5<Merged>;
 
-type ValidateConstraint5<Merged extends Partial<ExtendedOptions>> =
+type ValidateConstraint5<Merged> =
   // Check 5: Standalone CLI must have exactly one format
   Merged extends { productType: 'standalone-cli'; format: infer F }
     ? F extends readonly unknown[]
