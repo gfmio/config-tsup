@@ -228,23 +228,48 @@ export const nodeCli = merge(node, cli, banner(NODE_SHEBANG));
 
 // ESM Node CLI
 
-export const esmNodeCli = merge(node, cli, esm);
+export const esmNodeCli = merge(node, cli, esmOnly, banner(NODE_SHEBANG));
 
 // CJS Node CLI
 
-export const cjsNodeCli = merge(node, cli, cjs, banner(NODE_SHEBANG+USE_STRICT));
+export const cjsNodeCli = merge(node, cli, cjsOnly, banner(NODE_SHEBANG+USE_STRICT));
 
-// Bun CLI
+// Standalone Node CLI (single-file executable)
+
+export const standaloneNodeCli = merge(node, standaloneCli, banner(NODE_SHEBANG));
+
+// ESM Standalone Node CLI
+
+export const esmStandaloneNodeCli = merge(node, standaloneCli, esmOnly, banner(NODE_SHEBANG));
+
+// CJS Standalone Node CLI
+
+export const cjsStandaloneNodeCli = merge(node, standaloneCli, cjsOnly, banner(NODE_SHEBANG+USE_STRICT));
+
+// Bun CLI (regular npm distribution)
 
 export const bunCli = merge(neutral, cli, banner(BUN_SHEBANG));
 
 // ESM Bun CLI
 
-export const esmBunCli = merge(neutral, cli, esm, banner(BUN_SHEBANG));
+export const esmBunCli = merge(neutral, cli, esmOnly, banner(BUN_SHEBANG));
 
 // CJS Bun CLI
 
-export const cjsBunCli = merge(neutral, cli, cjs, banner(BUN_SHEBANG+USE_STRICT));
+export const cjsBunCli = merge(neutral, cli, cjsOnly, banner(BUN_SHEBANG+USE_STRICT));
+
+// Standalone Bun CLI (single-file executable)
+
+export const standaloneBunCli = merge(neutral, standaloneCli, banner(BUN_SHEBANG));
+
+// ESM Standalone Bun CLI
+
+export const esmStandaloneBunCli = merge(neutral, standaloneCli, esmOnly, banner(BUN_SHEBANG));
+
+// CJS Standalone Bun CLI
+
+export const cjsStandaloneBunCli = merge(neutral, standaloneCli, cjsOnly, banner(BUN_SHEBANG+USE_STRICT));
+
 
 //
 // Bundle Analyzer
