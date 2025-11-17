@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "rootDir": "."
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+  "extends": "@gfmio/tsconfig/library-bundler.json",
+  "include": [
+    "."
+  ]
+}

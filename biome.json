@@ -1,0 +1,36 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.5/schema.json",
+  "extends": [
+    "@gfmio/config-biome/biome.json"
+  ],
+  "linter": {
+    "rules": {
+      "correctness": {
+        "noNodejsModules": "off"
+      },
+      "nursery": {
+        "useExplicitType": "off"
+      },
+      "style": {
+        "noDefaultExport": "off",
+        "noInferrableTypes": "off",
+        "noMagicNumbers": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "assist": {
+        "actions": {
+          "source": {
+            "useSortedKeys": "off"
+          }
+        }
+      },
+      "includes": [
+        "package.json"
+      ]
+    }
+  ],
+  "root": true
+}
