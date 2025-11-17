@@ -64,14 +64,14 @@ export function getBuildMode(): 'development' | 'production' {
  * Check if running in CI environment
  */
 export function isCI(): boolean {
-  return !!(
+  return Boolean(
     process.env['CI']
-    || process.env['CONTINUOUS_INTEGRATION']
-    || process.env['GITHUB_ACTIONS']
-    || process.env['GITLAB_CI']
-    || process.env['CIRCLECI']
-    || process.env['TRAVIS']
-    || process.env['JENKINS_URL']
+      || process.env['CONTINUOUS_INTEGRATION']
+      || process.env['GITHUB_ACTIONS']
+      || process.env['GITLAB_CI']
+      || process.env['CIRCLECI']
+      || process.env['TRAVIS']
+      || process.env['JENKINS_URL'],
   );
 }
 
@@ -79,5 +79,5 @@ export function isCI(): boolean {
  * Check if running in watch mode
  */
 export function isWatchMode(): boolean {
-  return !!(process.env['WATCH'] || process.argv.includes('--watch') || process.argv.includes('-w'));
+  return Boolean(process.env['WATCH'] || process.argv.includes('--watch') || process.argv.includes('-w'));
 }

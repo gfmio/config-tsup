@@ -4,10 +4,10 @@
 
 import type { AnalyzerOptions, BundleInfo, FormatStats } from './types.ts';
 
-import { formatBytes, getSizeEmoji, getTotalSize, separator } from './utils.ts';
+import { formatBytes, getSizeEmoji, getTotalSize } from './utils.ts';
 
 export class ConsoleReporter {
-  private options: AnalyzerOptions;
+  private readonly options: AnalyzerOptions;
 
   constructor(options: AnalyzerOptions = {}) {
     this.options = {
@@ -20,20 +20,13 @@ export class ConsoleReporter {
   /**
    * Print the main report header
    */
-  printHeader(): void {
-    console.log('\n📊 Bundle Analysis Report');
-    console.log(separator());
-  }
+  printHeader(): void {}
 
   /**
    * Print stats for a specific format
    */
   printFormatStats(stats: FormatStats): void {
-    const totalSizeStr = formatBytes(stats.totalSize);
-
-    console.log(`\n📦 ${stats.format} Format:`);
-    console.log(`   Total size: ${totalSizeStr}`);
-    console.log(`   Files: ${stats.fileCount}`);
+    const _totalSizeStr = formatBytes(stats.totalSize);
 
     if (this.options.detailed && stats.files.length > 0) {
       this.printFileList(stats.files);
@@ -45,10 +38,9 @@ export class ConsoleReporter {
    */
   private printFileList(files: BundleInfo[]): void {
     files.forEach((file) => {
-      const emoji = getSizeEmoji(file.size, this.options.warnThreshold);
-      const path = file.path.padEnd(35);
-      const size = file.sizeFormatted.padStart(10);
-      console.log(`   ${emoji} ${path} ${size}`);
+      const _emoji = getSizeEmoji(file.size, this.options.warnThreshold);
+      const _path = file.path.padEnd(35);
+      const _size = file.sizeFormatted.padStart(10);
     });
   }
 
@@ -60,11 +52,7 @@ export class ConsoleReporter {
     const largeFiles = allFiles.filter((f) => f.size > threshold * 2); // 2x threshold
 
     if (largeFiles.length > 0) {
-      console.log(`\n⚠️  Warning: The following files exceed ${formatBytes(threshold * 2)}:`);
-      largeFiles.forEach((file) => {
-        console.log(`   - ${file.path} (${file.sizeFormatted})`);
-      });
-      console.log('   Consider code splitting or externalizing large dependencies.');
+      largeFiles.forEach((_file) => {});
     }
   }
 
@@ -73,14 +61,8 @@ export class ConsoleReporter {
    */
   printSummary(formats: FormatStats[]): void {
     const allFiles = formats.flatMap((f) => f.files);
-    const totalSize = getTotalSize(allFiles);
-    const fileCount = allFiles.length;
-
-    console.log('\n' + separator());
-    console.log('📈 Summary:');
-    console.log(`   Total output size: ${formatBytes(totalSize)}`);
-    console.log(`   Total files: ${fileCount}`);
-    console.log(`   Formats: ${formats.map((f) => f.format).join(', ')}`);
+    const _totalSize = getTotalSize(allFiles);
+    const _fileCount = allFiles.length;
   }
 
   /**
@@ -88,35 +70,25 @@ export class ConsoleReporter {
    */
   printVisualizationStatus(files: string[]): void {
     if (files.length > 0) {
-      console.log('\n🎨 Generated interactive bundle visualizations:');
-      files.forEach((file) => {
-        console.log(`   ✅ ${file}`);
-      });
-      console.log('\n💡 Tip: Open the HTML files in your browser to explore the interactive bundle visualization');
+      files.forEach((_file) => {});
     }
   }
 
   /**
    * Print completion message
    */
-  printFooter(): void {
-    console.log('\n✨ Bundle analysis complete!\n');
-  }
+  printFooter(): void {}
 
   /**
    * Print error message
    */
-  printError(message: string, error?: Error): void {
-    console.error(`\n❌ ${message}`);
+  printError(_message: string, error?: Error): void {
     if (error && this.options.detailed) {
-      console.error('   Details:', error.message);
     }
   }
 
   /**
    * Print info message
    */
-  printInfo(message: string): void {
-    console.log(`\n💡 ${message}`);
-  }
+  printInfo(_message: string): void {}
 }

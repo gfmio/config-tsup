@@ -4,16 +4,16 @@
 
 import type { AnalyzerOptions } from './types.ts';
 
+import { exec } from 'node:child_process';
+import { join } from 'node:path';
 import process from 'node:process';
-import { exec } from 'child_process';
-import { join } from 'path';
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 
 const execAsync = promisify(exec);
 
 export class Visualizer {
-  private options: AnalyzerOptions;
-  private outputDir: string;
+  private readonly options: AnalyzerOptions;
+  private readonly outputDir: string;
 
   constructor(options: AnalyzerOptions = {}) {
     this.options = {

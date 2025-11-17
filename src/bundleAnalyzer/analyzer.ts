@@ -4,19 +4,19 @@
 
 import type { AnalyzerOptions, BundleInfo, FormatStats, Metafile, MetafileOutput } from './types.ts';
 
+import { readdir, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import process from 'node:process';
-import { readdir, readFile } from 'fs/promises';
-import { join } from 'path';
 
 import { ConsoleReporter } from './reporter.ts';
 import { extractFormat, formatBytes, getRelativePath, sortBySize } from './utils.ts';
 import { Visualizer } from './visualizer.ts';
 
 export class BundleAnalyzer {
-  private options: AnalyzerOptions;
-  private reporter: ConsoleReporter;
-  private visualizer: Visualizer;
-  private distDir: string;
+  private readonly options: AnalyzerOptions;
+  private readonly reporter: ConsoleReporter;
+  private readonly visualizer: Visualizer;
+  private readonly distDir: string;
 
   constructor(
     options: AnalyzerOptions = {},

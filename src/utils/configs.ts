@@ -1,16 +1,16 @@
 import type { Options } from 'tsup';
 
 /** Utility function for defining arrays of tsup config objects that ensures that each item is a valid config. */
-export function configs<const T extends Array<Options>>(...configs: T): T;
-export function configs<const T extends Array<Options>>(configs: T): T;
-export function configs<const T extends Array<Options>>(
+export function configs<const T extends Options[]>(...configs: T): T;
+export function configs<const T extends Options[]>(configs: T): T;
+export function configs<const T extends Options[]>(
   ...args:
     | [
         T,
       ]
     | T
 ): T;
-export function configs<const T extends Array<Options>>(
+export function configs<const T extends Options[]>(
   ...args:
     | [
         T,
@@ -18,12 +18,12 @@ export function configs<const T extends Array<Options>>(
     | T
 ): T {
   if (args.length === 0) {
-    return [] as Array<Options> as T;
+    return [] as Options[] as T;
   }
 
   if (Array.isArray(args[0])) {
     return args[0];
   }
 
-  return args as Array<Options> as T;
+  return args as Options[] as T;
 }

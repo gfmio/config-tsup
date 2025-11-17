@@ -10,7 +10,9 @@ import process from 'node:process';
  * Format bytes to human-readable string
  */
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) {
+    return '0 B';
+  }
 
   const sizes = [
     'B',
@@ -28,8 +30,12 @@ export function formatBytes(bytes: number): string {
  * Get size emoji based on file size
  */
 export function getSizeEmoji(bytes: number, warnThreshold: number = 512 * 1024): string {
-  if (bytes > 1024 * 1024) return '⚠️'; // > 1MB
-  if (bytes > warnThreshold) return '⚡'; // > warning threshold
+  if (bytes > 1024 * 1024) {
+    return '⚠️'; // > 1MB
+  }
+  if (bytes > warnThreshold) {
+    return '⚡'; // > warning threshold
+  }
   return '✅'; // OK
 }
 
@@ -61,7 +67,7 @@ export function getTotalSize(bundles: BundleInfo[]): number {
  */
 export function getRelativePath(fullPath: string): string {
   const cwd = process.cwd();
-  return fullPath.startsWith(cwd) ? fullPath.replace(cwd + '/', '') : fullPath;
+  return fullPath.startsWith(cwd) ? fullPath.replace(`${cwd}/`, '') : fullPath;
 }
 
 /**
