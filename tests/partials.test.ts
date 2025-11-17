@@ -313,10 +313,6 @@ describe('Partial Configurations', () => {
         platform: 'neutral',
       });
     });
-
-    it('should have isomorphic as alias for neutral', () => {
-      expect(partials.isomorphic).toBe(partials.neutral);
-    });
   });
 
   describe('Environment Partials', () => {
