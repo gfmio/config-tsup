@@ -16,7 +16,7 @@ const PlatformSchema = z.enum(['node', 'browser', 'neutral']);
 const EntrySchema = z.union([
   z.string(),
   z.array(z.string()),
-  z.record(z.string()),
+  z.record(z.string(), z.string()),
 ]);
 
 const SourcemapSchema = z.union([
@@ -29,7 +29,7 @@ const SourcemapSchema = z.union([
 const DtsSchema = z.union([
   z.boolean(),
   z.object({
-    entry: z.union([z.string(), z.array(z.string()), z.record(z.string())]).optional(),
+    entry: z.union([z.string(), z.array(z.string()), z.record(z.string(), z.string())]).optional(),
     resolve: z.boolean().optional(),
     only: z.boolean().optional(),
   }),
@@ -108,15 +108,15 @@ export const TsupOptionsSchema = z.object({
   esbuildPlugins: z.array(z.any()).optional(),
 
   // Environment
-  env: z.record(z.string()).optional(),
-  define: z.record(z.string()).optional(),
+  env: z.record(z.string(), z.string()).optional(),
+  define: z.record(z.string(), z.string()).optional(),
   pure: z.array(z.string()).optional(),
 
   // Other options
   globalName: z.string().optional(),
   footer: BannerSchema.optional(),
   banner: BannerSchema.optional(),
-  loader: z.record(z.string()).optional(),
+  loader: z.record(z.string(), z.string()).optional(),
   ignoreWatch: z.array(z.string()).optional(),
   publicPath: z.string().optional(),
   plugins: z.array(z.any()).optional(),
@@ -180,20 +180,7 @@ export const TsupOptionsSchema = z.object({
     }
   }
 
-  // Target validation
-  if (config.platform === 'node' && config.target) {
-    const nodeTargets = ['node14', 'node16', 'node18', 'node20'];
-    const targetStr = Array.isArray(config.target) ? config.target[0] : config.target;
-
-    // Warn if using ES target with Node platform
-    if (targetStr && targetStr.startsWith('es') && !nodeTargets.includes(targetStr)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Consider using a Node.js-specific target (e.g., 'node18') instead of '${targetStr}' for Node.js platform`,
-        path: ['target'],
-      });
-    }
-  }
+  // Target validation warnings are handled in getConfigWarnings function
 
   // External and noExternal conflict
   if (config.external && config.noExternal) {
@@ -260,37 +247,62 @@ export interface ValidationResult {
 }
 
 /**
+ * Check for configuration warnings that don't fail validation
+ */
+function getConfigWarnings(config: any): Array<{ path: string; message: string }> {
+  const warnings: Array<{ path: string; message: string }> = [];
+
+  // Check for ES target with Node platform
+  if (config.platform === 'node' && config.target) {
+    const nodeTargets = ['node14', 'node16', 'node18', 'node20'];
+    const targetStr = Array.isArray(config.target) ? config.target[0] : config.target;
+
+    if (targetStr && targetStr.startsWith('es') && !nodeTargets.includes(targetStr)) {
+      warnings.push({
+        path: 'target',
+        message: `Consider using a Node.js-specific target (e.g., 'node18') instead of '${targetStr}' for Node.js platform`,
+      });
+    }
+  }
+
+  return warnings;
+}
+
+/**
  * Validate a tsup configuration
  */
 export function validateConfig(config: unknown): ValidationResult {
   try {
     const result = TsupOptionsSchema.parse(config);
-    return {
+    const warnings = getConfigWarnings(config);
+
+    const validResult: ValidationResult = {
       success: true,
       data: result as Options,
     };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      // Separate errors and warnings
-      const errors = error.errors.filter(e =>
-        !e.message.includes('Consider') && !e.message.includes('recommended')
-      );
-      const warnings = error.errors.filter(e =>
-        e.message.includes('Consider') || e.message.includes('recommended')
-      );
+    if (warnings.length > 0) {
+      validResult.warnings = warnings;
+    }
+    return validResult;
+  } catch (error: any) {
+    if (error && error.errors && Array.isArray(error.errors)) {
+      // Zod error - all issues are errors in strict mode
+      const errors = error.errors.map((err: any) => ({
+        path: Array.isArray(err.path) ? err.path.join('.') : String(err.path || ''),
+        message: err.message,
+      }));
 
-      return {
-        success: errors.length === 0,
-        data: errors.length === 0 ? config as Options : undefined,
-        errors: errors.length > 0 ? errors.map(err => ({
-          path: err.path.join('.'),
-          message: err.message,
-        })) : undefined,
-        warnings: warnings.length > 0 ? warnings.map(warn => ({
-          path: warn.path.join('.'),
-          message: warn.message,
-        })) : undefined,
+      // Also check for warnings
+      const warnings = getConfigWarnings(config);
+
+      const errorResult: ValidationResult = {
+        success: false,
+        errors,
       };
+      if (warnings.length > 0) {
+        errorResult.warnings = warnings;
+      }
+      return errorResult;
     }
     return {
       success: false,
@@ -330,7 +342,7 @@ export function createValidatedConfig(config: Partial<Options>): Options {
  * Wrap a configuration with validation
  */
 export function withValidation<T extends Partial<Options>>(config: T): T {
-  if (process.env.NODE_ENV === 'production' && process.env.VALIDATE_CONFIG !== 'true') {
+  if (process.env.NODE_ENV === 'production' && process.env['VALIDATE_CONFIG'] !== 'true') {
     // Skip validation in production unless explicitly requested
     return config;
   }
@@ -371,6 +383,7 @@ export function checkIncompatibilities(config: Partial<Options>): string[] {
 
   // Check for DTS-only mode issues
   const dtsOnly = config.dts && typeof config.dts === 'object' && config.dts.only;
+
   if (dtsOnly) {
     if (config.minify) issues.push('Minification not needed in dts-only mode');
     if (config.splitting) issues.push('Code splitting not applicable in dts-only mode');
