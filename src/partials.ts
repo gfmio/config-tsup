@@ -57,6 +57,9 @@ export const noTreeshake = partial({ treeshake: false });
 export const dts = partial({ dts: true });
 export const noDts = partial({ dts: false });
 
+export const experimentalDts = partial({ experimentalDts: true });
+export const noExperimentalDts = partial({ experimentalDts: false });
+
 // shims options
 
 export const shims = partial({ shims: true });
