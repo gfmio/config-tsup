@@ -4,7 +4,13 @@
     "name": "Frédérique Mittelstaedt",
     "url": "https://www.gfm.io"
   },
+  "bin": {
+    "tsup-config": "./dist/cli.mjs"
+  },
   "description": "Shared tsup configuration used across many projects",
+  "dependencies": {
+    "zod": "^4.1.12"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.3.5",
     "@commitlint/cli": "^20.1.0",
@@ -34,14 +40,19 @@
       "require": "./dist/partials.cjs"
     },
     "./presets": {
-      "types": "./dist/partials.d.ts",
-      "import": "./dist/partials.mjs",
-      "require": "./dist/partials.cjs"
+      "types": "./dist/presets.d.ts",
+      "import": "./dist/presets.mjs",
+      "require": "./dist/presets.cjs"
     },
     "./utils": {
-      "types": "./dist/utils.d.ts",
-      "import": "./dist/utils.mjs",
-      "require": "./dist/utils.cjs"
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.cjs"
+    },
+    "./bundleAnalyzer": {
+      "types": "./dist/bundleAnalyzer/index.d.ts",
+      "import": "./dist/bundleAnalyzer/index.mjs",
+      "require": "./dist/bundleAnalyzer/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -63,6 +74,11 @@
   "peerDependencies": {
     "tsup": "^8.5.1",
     "esbuild-visualizer": "^0.7.0"
+  },
+  "peerDependenciesMeta": {
+    "esbuild-visualizer": {
+      "optional": true
+    }
   },
   "repository": {
     "type": "git",
