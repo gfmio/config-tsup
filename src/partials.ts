@@ -5,8 +5,8 @@
 import {
   ALL_EXTERNALS,
   BUN_SHEBANG,
-  DIST,
   defaultOutExtensionHelper,
+  DIST,
   ES2022,
   NODE_LTS,
   NODE_SHEBANG,
@@ -426,27 +426,27 @@ export const cjsStandaloneNodeCli = merge(node, standaloneCli, cjsOnly, banner(N
 
 // Bun CLI (regular npm distribution)
 
-export const bunCli = merge(node, cli, banner(BUN_SHEBANG));
+export const bunCli = merge(neutral, cli, banner(BUN_SHEBANG));
 
 // ESM Bun CLI
 
-export const esmBunCli = merge(node, cli, esmOnly, banner(BUN_SHEBANG));
+export const esmBunCli = merge(neutral, cli, esmOnly, banner(BUN_SHEBANG));
 
 // CJS Bun CLI
 
-export const cjsBunCli = merge(node, cli, cjsOnly, banner(BUN_SHEBANG + USE_STRICT));
+export const cjsBunCli = merge(neutral, cli, cjsOnly, banner(BUN_SHEBANG + USE_STRICT));
 
 // Standalone Bun CLI (single-file executable)
 
-export const standaloneBunCli = merge(node, standaloneCli, banner(BUN_SHEBANG));
+export const standaloneBunCli = merge(neutral, standaloneCli, banner(BUN_SHEBANG));
 
 // ESM Standalone Bun CLI
 
-export const esmStandaloneBunCli = merge(node, standaloneCli, esmOnly, banner(BUN_SHEBANG));
+export const esmStandaloneBunCli = merge(neutral, standaloneCli, esmOnly, banner(BUN_SHEBANG));
 
 // CJS Standalone Bun CLI
 
-export const cjsStandaloneBunCli = merge(node, standaloneCli, cjsOnly, banner(BUN_SHEBANG + USE_STRICT));
+export const cjsStandaloneBunCli = merge(neutral, standaloneCli, cjsOnly, banner(BUN_SHEBANG + USE_STRICT));
 
 //
 // Watch Mode
