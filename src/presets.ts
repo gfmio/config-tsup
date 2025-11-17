@@ -3,9 +3,9 @@
 //
 
 import { config } from "./lib/config";
-import { configs } from "./lib/configs";
-import { merge } from "./lib/merge";
-import { base, browser, cjsBunCli as cjsBunCliPartial, cjsNodeCli as cjsNodeCliPartial, cjsOnly, dtsOnly, esmBunCli as esmBunCliPartial, esmNodeCli as esmNodeCliPartial, esmOnly, iife, minify, neutral, node, noDts, noSourcemap, shims, sourcemap, splitting } from "./partials";
+import { config } from "./utils/config";
+import { configs } from "./utils/configs";
+import { merge } from "./utils/merge";
 
 //
 // Libraries

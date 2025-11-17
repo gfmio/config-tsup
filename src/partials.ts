@@ -3,9 +3,9 @@
 //
 
 import { ALL_EXTERNALS, BUN_SHEBANG, defaultOutExtensionHelper, DIST, ES2022, NODE_LTS, NODE_SHEBANG, USE_STRICT } from "./constants";
-import { banner } from "./lib/banner";
-import { merge } from "./lib/merge";
-import { partial } from "./lib/partial";
+import { banner } from "./utils/banner";
+import { merge } from "./utils/merge";
+import { partial } from "./utils/partial";
 
 export const clean = partial({ clean: true });
 export const noClean = partial({ clean: false });
