@@ -275,10 +275,32 @@ export const cjsStandaloneBunCli = merge(neutral, standaloneCli, cjsOnly, banner
 // Bundle Analyzer
 //
 
-import { onSuccess } from "./bundleAnalyzer/indes.ts";
+import {
+  ciAnalyzer,
+  devAnalyzer,
+  minimalAnalyzer,
+  onSuccess,
+  strictAnalyzer,
+} from "./bundleAnalyzer/index";
 
+// Default analyzer configuration
 export const analyzeConfig = partial({
   metafile: true,  // Generate bundle analysis metadata
+  onSuccess,
+});
+
+// Minimal bundle analysis (no visualizations)
+export const minimalAnalyzeConfig = partial(minimalAnalyzer);
+
+// Strict bundle analysis (fails on large bundles)
+export const strictAnalyzeConfig = partial(strictAnalyzer);
+
+// CI-friendly bundle analysis
+export const ciAnalyzeConfig = partial(ciAnalyzer);
+
+// Development bundle analysis with all features
+export const devAnalyzeConfig = partial(devAnalyzer);
+
   onSuccess: onSuccess,
 });
 });
