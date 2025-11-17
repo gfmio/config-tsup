@@ -369,6 +369,28 @@ export const esmStandaloneBunCli = merge(neutral, standaloneCli, esmOnly, banner
 
 export const cjsStandaloneBunCli = merge(neutral, standaloneCli, cjsOnly, banner(BUN_SHEBANG+USE_STRICT));
 
+//
+// Watch Mode
+//
+
+// Basic watch mode
+export const watch = partial({
+  watch: true,
+});
+
+// Watch with success callback
+export const watchWithSuccess = (onSuccess: string | (() => Promise<void | (() => Promise<void> | void) | undefined>)) => partial({
+  watch: true,
+  onSuccess,
+});
+
+// Development watch mode - optimized for fast rebuilds
+export const watchDevelopment = partial({
+  watch: true,
+  minify: false,
+  sourcemap: 'inline',
+  treeshake: false,  // Skip for faster rebuilds
+});
 
 //
 // Bundle Analyzer
