@@ -207,9 +207,9 @@ export const cli = partial({
   keepNames: true,  // Preserve function names for stack traces
   shims: true,
   target: NODE_LTS,
+  skipNodeModulesBundle: true,  // Don't bundle dependencies for npm distribution
 });
 
-// Node CLI
 
 export const nodeCli = merge(node, cli);
 
