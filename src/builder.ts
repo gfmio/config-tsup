@@ -313,7 +313,7 @@ export class TsupConfigBuilder {
    */
   build(): Options {
     // Optionally validate if available
-    if (process.env.VALIDATE_CONFIG === 'true') {
+    if (process.env['VALIDATE_CONFIG'] === 'true') {
       import('./validation.ts').then(({ validateConfig }) => {
         const result = validateConfig(this.config);
         if (!result.success) {
