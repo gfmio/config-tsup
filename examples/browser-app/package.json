@@ -1,0 +1,16 @@
+{
+  "name": "browser-app-example",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "serve": "npx serve dist"
+  },
+  "devDependencies": {
+    "@gfmio/config-tsup": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "esbuild-visualizer": "^0.7.0"
+  }
+}
